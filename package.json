@@ -1,6 +1,6 @@
 {
   "name": "@meteorjs/ddp-graceful-shutdown",
-  "version": "1.0.0-beta.6",
+  "version": "0.9.0",
   "description": "Close DDP connections gradually on server shutdown",
   "main": "lib/index.js",
   "scripts": {
