@@ -27,11 +27,7 @@ describe('DDPGracefulShutdown', () => {
     const server = new Server;
     const gracePeriodMillis = 2;
     const connectionCount = 10;
-    const dgs = new DDPGracefulShutdown({
-      server,
-      gracePeriodMillis,
-      installSIGTERMHandler: false,
-    });
+    const dgs = new DDPGracefulShutdown({server, gracePeriodMillis});
 
     // Add some connections to remove gracefully.
     let closed = 0;

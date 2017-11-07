@@ -15,7 +15,7 @@ import {Meteor} from 'meteor/meteor';
 new DDPGracefulShutdown({
   gracePeriodMillis: 1000 * process.METEOR_SIGTERM_GRACE_PERIOD_SECONDS,
   server: Meteor.server,
-});
+}).installSIGTERMHandler();
 ```
 
 This registers a SIGTERM handler which will call

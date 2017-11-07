@@ -7,10 +7,8 @@
 class DDPGracefulShutdown {
   // gracePeriodMillis and server are required. Typically, server is set to
   // Meteor.server. On Galaxy, a good value for gracePeriodMillis is 1000 *
-  // process.env.METEOR_SIGTERM_GRACE_PERIOD_SECONDS. If installSIGTERMHandler
-  // is set to false, you are responsibile for calling this.closeConnections
-  // yourself (perhaps without the log argument).
-  constructor({gracePeriodMillis, server, installSIGTERMHandler = true}) {
+  // process.env.METEOR_SIGTERM_GRACE_PERIOD_SECONDS.
+  constructor({gracePeriodMillis, server}) {
     this.gracePeriodMillis = gracePeriodMillis;
     this.connections = new Map;
     server.onConnection((conn) => {
@@ -19,16 +17,20 @@ class DDPGracefulShutdown {
         this.connections.delete(conn.id);
       });
     });
-    if (installSIGTERMHandler) {
-      process.on('SIGTERM', () => {
-        this.closeConnections({log: true});
-      });
-    }
   }
 
-  // closeConnections is called when SIGTERM is received (unless you configure
-  // this class with installSIGTERMHandler: false). It calculates an interval
-  // for closing connections and starts doing so. If log is specified (the
+  // Sets up a SIGTERM handler to call closeConnections with logging. You should
+  // either call this function or arrange for closeConnections to be called in
+  // some other way.
+  installSIGTERMHandler() {
+    process.on('SIGTERM', () => {
+      this.closeConnections({log: true});
+    });
+  }
+
+  // closeConnections calculates an interval for closing connections and starts
+  // doing so. It is intended to be called when SIGTERM is received;
+  // installSIGTERMHandler arranges for this to happen. If log is specified (the
   // default if this is called from the default SIGTERM handler) it will log one
   // line to stdout as well.
   closeConnections({log} = {}) {
