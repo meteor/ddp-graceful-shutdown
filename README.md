@@ -1,5 +1,7 @@
 # @meteorjs/ddp-graceful-shutdown
 
+[![Build Status](https://travis-ci.org/meteor/meteor-ddp-graceful-shutdown.svg?branch=master)](https://travis-ci.org/meteor/meteor-ddp-graceful-shutdown)
+
 This package is designed for use with [Meteor](https://www.meteor.com/) apps
 running on platforms such as Galaxy which send SIGTERM signals and wait a grace
 period before killing processes.
