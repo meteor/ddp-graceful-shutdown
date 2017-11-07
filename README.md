@@ -13,7 +13,7 @@ import {DDPGracefulShutdown} from '@meteorjs/ddp-graceful-shutdown';
 import {Meteor} from 'meteor/meteor';
 
 new DDPGracefulShutdown({
-  gracePeriodMillis: 1000 * process.METEOR_SIGTERM_GRACE_PERIOD_SECONDS,
+  gracePeriodMillis: 1000 * process.env.METEOR_SIGTERM_GRACE_PERIOD_SECONDS,
   server: Meteor.server,
 }).installSIGTERMHandler();
 ```
