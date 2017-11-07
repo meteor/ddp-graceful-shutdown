@@ -1,0 +1,35 @@
+{
+  "name": "@meteorjs/ddp-graceful-shutdown",
+  "version": "1.0.0-beta.5",
+  "description": "Close DDP connections gradually on server shutdown",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha --require babel-register",
+    "prepare": "babel src/ --out-dir lib/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meteor/ddp-graceful-shutdown.git"
+  },
+  "keywords": [
+    "meteor",
+    "ddp"
+  ],
+  "author": "David Glasser <glasser@meteor.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/meteor/ddp-graceful-shutdown/issues"
+  },
+  "homepage": "https://github.com/meteor/ddp-graceful-shutdown#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "mocha": "^4.0.1"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  }
+}

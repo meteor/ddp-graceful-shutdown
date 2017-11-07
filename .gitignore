@@ -1,0 +1,5 @@
+node_modules
+lib
+# It's not an app and has no non-dev deps, so no need to lock.
+package-lock.json
+
