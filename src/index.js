@@ -8,10 +8,10 @@ class DDPGracefulShutdown {
   // gracePeriodMillis and server are required. Typically, server is set to
   // Meteor.server. On Galaxy, a good value for gracePeriodMillis is 1000 *
   // process.env.METEOR_SIGTERM_GRACE_PERIOD_SECONDS.
-  constructor({gracePeriodMillis, server}) {
+  constructor({ gracePeriodMillis, server }) {
     this.gracePeriodMillis = gracePeriodMillis;
-    this.connections = new Map;
-    server.onConnection((conn) => {
+    this.connections = new Map();
+    server.onConnection(conn => {
       this.connections.set(conn.id, conn);
       conn.onClose(() => {
         this.connections.delete(conn.id);
@@ -23,8 +23,8 @@ class DDPGracefulShutdown {
   // either call this function or arrange for closeConnections to be called in
   // some other way.
   installSIGTERMHandler() {
-    process.on('SIGTERM', () => {
-      this.closeConnections({log: true});
+    process.on("SIGTERM", () => {
+      this.closeConnections({ log: true });
     });
   }
 
@@ -33,9 +33,13 @@ class DDPGracefulShutdown {
   // installSIGTERMHandler arranges for this to happen. If log is specified (the
   // default if this is called from the default SIGTERM handler) it will log one
   // line to stdout as well.
-  closeConnections({log} = {}) {
+  closeConnections({ log } = {}) {
     if (log) {
-      console.log(`Got SIGTERM; will close ${ this.connections.size } connection(s) in ${ this.gracePeriodMillis }ms`);
+      console.log(
+        `Got SIGTERM; will close ${this.connections.size} connection(s) in ${
+          this.gracePeriodMillis
+        }ms`
+      );
     }
     let delay, batchSize;
     if (this.gracePeriodMillis >= this.connections.size) {
@@ -43,7 +47,7 @@ class DDPGracefulShutdown {
       batchSize = 1;
     } else {
       delay = 1;
-      batchSize = this.connections.size  / this.gracePeriodMillis;
+      batchSize = this.connections.size / this.gracePeriodMillis;
     }
     this.closeOneBatchAndScheduleNext(delay, batchSize);
   }
@@ -60,14 +64,17 @@ class DDPGracefulShutdown {
         closed++;
       }
       if (this.connections.size > 0) {
-        setTimeout(() => this.closeOneBatchAndScheduleNext(delay, batchSize), delay);
+        setTimeout(
+          () => this.closeOneBatchAndScheduleNext(delay, batchSize),
+          delay
+        );
       }
     });
   }
 
   closeOneConnection() {
     Promise.resolve().then(() => {
-      const {done, value} = this.connections.entries().next();
+      const { done, value } = this.connections.entries().next();
       if (done) {
         return;
       }

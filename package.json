@@ -4,7 +4,7 @@
   "description": "Close DDP connections gradually on server shutdown",
   "main": "lib/index.js",
   "scripts": {
-    "test": "mocha --require babel-register",
+    "test": "eslint 'src/**/*.js' 'test/**/*.js' && mocha --require babel-register",
     "prepare": "babel src/ --out-dir lib/"
   },
   "repository": {
@@ -25,7 +25,11 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
-    "mocha": "^4.0.1"
+    "eslint": "^4.10.0",
+    "eslint-config-prettier": "^2.7.0",
+    "eslint-plugin-prettier": "^2.3.1",
+    "mocha": "^4.0.1",
+    "prettier": "1.8.2"
   },
   "babel": {
     "presets": [
