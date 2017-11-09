@@ -24,10 +24,9 @@ class Server extends EventEmitter {
 }
 
 describe("DDPGracefulShutdown", () => {
-  it("should close connections gracefully", done => {
+  //  it("should close connections gracefully", done => {
+  const doTest = (gracePeriodMillis, connectionCount, done) => {
     const server = new Server();
-    const gracePeriodMillis = 2;
-    const connectionCount = 10;
     const dgs = new DDPGracefulShutdown({ server, gracePeriodMillis });
 
     // Add some connections to remove gracefully.
@@ -55,6 +54,9 @@ describe("DDPGracefulShutdown", () => {
     setTimeout(() => {
       assert.equal(closed, connectionCount);
       done();
-    }, gracePeriodMillis * 1.5);
-  });
+    }, gracePeriodMillis * 1.3);
+  };
+  it("when no connections", done => doTest(2, 0, done));
+  it("when more connections than millis", done => doTest(2, 15, done));
+  it("when fewer connections than millis", done => doTest(15, 10, done));
 });
