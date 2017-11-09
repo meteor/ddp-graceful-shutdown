@@ -37,15 +37,35 @@ class DDPGracefulShutdown {
     if (log) {
       console.log(`Got SIGTERM; will close ${ this.connections.size } connection(s) in ${ this.gracePeriodMillis }ms`);
     }
-    const delay = this.gracePeriodMillis / this.connections.size;
-    this.closeOneConnectionAndScheduleNext(delay);
+    let delay, batchSize;
+    if (this.gracePeriodMillis >= this.connections.size) {
+      delay = this.gracePeriodMillis / this.connections.size;
+      batchSize = 1;
+    } else {
+      delay = 1;
+      batchSize = this.connections.size  / this.gracePeriodMillis;
+    }
+    this.closeOneBatchAndScheduleNext(delay, batchSize);
   }
-  // Internal function which closes an arbitrary connection and waits to close
-  // the next one.
+  // Internal function which closes one batch of arbitrarily chosen connections
+  // and waits to close the next one.
   //
   // conn.close needs to be called from within a Fiber, so this arranges to get
   // the code in a Fiber by calling it from meteor-promise's queue.
-  closeOneConnectionAndScheduleNext(delay) {
+  closeOneBatchAndScheduleNext(delay, batchSize) {
+    Promise.resolve().then(() => {
+      let closed = 0;
+      while (this.connections.size > 0 && closed < batchSize) {
+        this.closeOneConnection();
+        closed++;
+      }
+      if (this.connections.size > 0) {
+        setTimeout(() => this.closeOneBatchAndScheduleNext(delay, batchSize), delay);
+      }
+    });
+  }
+
+  closeOneConnection() {
     Promise.resolve().then(() => {
       const {done, value} = this.connections.entries().next();
       if (done) {
@@ -54,9 +74,6 @@ class DDPGracefulShutdown {
       const [id, conn] = value;
       this.connections.delete(id);
       conn.close();
-      if (this.connections.size > 0) {
-        setTimeout(() => this.closeOneConnectionAndScheduleNext(delay), delay);
-      }
     });
   }
 }

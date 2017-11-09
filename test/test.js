@@ -54,6 +54,6 @@ describe('DDPGracefulShutdown', () => {
     setTimeout(() => {
       assert.equal(closed, connectionCount);
       done();
-    }, gracePeriodMillis*connectionCount*1.5);
+    }, gracePeriodMillis*1.5);
   });
 });
