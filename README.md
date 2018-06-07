@@ -12,10 +12,12 @@ To use on Galaxy:
 import {DDPGracefulShutdown} from '@meteorjs/ddp-graceful-shutdown';
 import {Meteor} from 'meteor/meteor';
 
-new DDPGracefulShutdown({
-  gracePeriodMillis: 1000 * process.env.METEOR_SIGTERM_GRACE_PERIOD_SECONDS,
-  server: Meteor.server,
-}).installSIGTERMHandler();
+if (Meteor.isProduction) {
+  new DDPGracefulShutdown({
+    gracePeriodMillis: 1000 * process.env.METEOR_SIGTERM_GRACE_PERIOD_SECONDS,
+    server: Meteor.server,
+  }).installSIGTERMHandler();
+}
 ```
 
 This registers a SIGTERM handler which will call
@@ -29,3 +31,8 @@ after connections already exist, they will not be tracked.
 
 This should work on all recent Meteor releases --- the `onConnection` API it
 relies on was introduced in 0.7.0, and it is transpiled to ES5 on npm.
+
+You shouldn't enable the graceful shutdown for your regular development because
+it will have the effect that your connected client will still call the old version
+of a Meteor method after you have made a change. We enable graceful shutdown only
+for production by wrapping the construct with `if (Meteor.isProduction) { ... }`.
